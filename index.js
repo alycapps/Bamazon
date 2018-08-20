@@ -1,5 +1,8 @@
 var inquirer = require("inquirer");
 var mysql = require("mysql");
+var customer = require("./bamazonCustomer");
+var manager = require("./bamazonManager");
+var supervisor = require("./bamazonSupervisor");
 
 inquirer.prompt([
     {
@@ -10,12 +13,13 @@ inquirer.prompt([
     }
 ]).then(function(viewChoice) {
     if(viewChoice.view === "Customer") {
-        console.log("yay!");
+        customer();
     }
     else if(viewChoice.view === "Manager") {
-    console.log("Woohoo you got this!");
+        manager();
     }
     else if(viewChoice.view === "Supervisor") {
-        console.log("Super choice!");
+        supervisor();
     }
 });
+
