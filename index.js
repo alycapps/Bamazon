@@ -39,3 +39,6 @@ var inquirerCall = function() {
         }
     });
 };
+
+
+module.exports = inquirerCall;
