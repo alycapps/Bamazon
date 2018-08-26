@@ -1,6 +1,6 @@
 var inquirer = require("inquirer");
 var mysql = require("mysql");
-var index = require("./index");
+var inquirerCall = require("./index");
 
 //setup for connection call
 var conn = mysql.createConnection({
@@ -45,39 +45,49 @@ var custInquirerCall = function() {
         message: "How many units would you like to buy?"
         }
     ]).then(function(response) {
-        console.log("woohoo made it through the questions");
         chosenId = response.id;
-        console.log("chosen id: " + chosenId);
         chosenUnits = response.units;
-        console.log("chosen units: " + chosenUnits);
-        custUpdate();
+        custCheckAvail();
     })
 };
 
-var custUpdate = function() {
-    console.log("Now we are in the updating price function :)")
-        //search through database for quantity of id entered
-        conn.query("select stock_quantity from products where ?", 
-        {
-            item_id: chosenId
-        }, function(err, data) {
-            console.log("quantity of chosen" + JSON.stringify(data[0].stock_quantity));
-            if (err) throw err;
-            if(chosenUnits > data[0].stock_quantity) {
-                console.log("you requested more than we have");
-            }
-            else {
-                console.log("ok buy it");
-            }
-        })
-        //checks quantity of id chosen 
-        //if less than it buys
-        //if more isufficient funds
-
-        //start over and see what view they would like to use
-        // index();
+var actualUnits, itemPrice;
+var custCheckAvail = function() {
+    //search through database for quantity of id entered
+    conn.query("select stock_quantity, price from products where ?", 
+    {
+        item_id: chosenId
+    }, function(err, data) {
+        console.log("quantity of chosen" + JSON.stringify(data[0].stock_quantity));
+        if (err) throw err;
+        actualUnits = data[0].stock_quantity;
+        itemPrice = data[0].price;
+        console.log("price: " + itemPrice);
+        if(chosenUnits > actualUnits) {
+            console.log("Insufficient Quantity");
+            //start over and see what view they would like to use
+            conn.end();
+        }
+        else {
+            custUpdate();
+        }
+    })       
 };
 
-
+var custUpdate = function() {
+    // update products set stock_quantity=200 where item_id=1;
+    var newQuantity = actualUnits - chosenUnits;
+    var owed = itemPrice*chosenUnits;
+    conn.query("update products set ? where ?;", [{
+        stock_quantity: newQuantity,
+    },
+    { 
+        item_id: chosenId
+    }
+    ], function(error, response) {
+        if (error) throw error;
+    });
+    console.log(`You owe Bamazon $${owed}`);
+};
 
 module.exports = customer;
