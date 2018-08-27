@@ -30,7 +30,7 @@ var readlistings = function() {
     })
 };
 
-//prompt users to enter info for items and quantity they want to buy
+//function to prompt users to enter info for items and quantity they want to buy
 var chosenId, chosenUnits;
 var custInquirerCall = function() {
     inquirer.prompt([
@@ -51,6 +51,7 @@ var custInquirerCall = function() {
     })
 };
 
+//function to check if requested item is available in quantity requested 
 var actualUnits, itemPrice;
 var custCheckAvail = function() {
     //search through database for quantity of id entered
@@ -72,6 +73,7 @@ var custCheckAvail = function() {
     })       
 };
 
+//function to update database and display amount owed
 var custUpdate = function() {
     // update products set stock_quantity=200 where item_id=1;
     var newQuantity = actualUnits - chosenUnits;

@@ -10,14 +10,16 @@ var conn = mysql.createConnection({
     database: "bamazon"
 });
 
+//function to connect to SQL database 
 var manager = function() {
-    console.log("yay, you connected to the manager function!");
+    //Connect to SQL database
     conn.connect(function(err) {
         if(err) throw err;
         manInquirerCall();
     })
 }
 
+//function to check which manager view the user would like to access
 var manInquirerCall = function() {
     inquirer.prompt([
         {
@@ -42,6 +44,7 @@ var manInquirerCall = function() {
     })
 };
 
+//function that allows manager to see items currently for sale
 var forSale = function() {
     conn.query("select * from products", function(err, res) {
         if (err) throw err;
@@ -51,6 +54,7 @@ var forSale = function() {
     })
 };
 
+//function that lets managers see items with low inventory(less than 5 in stock)
 var lowInventory = function() {
     conn.query("select * from products", function(err, res) {
         if (err) throw err;
@@ -65,11 +69,13 @@ var lowInventory = function() {
     })
 };
 
+//function that allows managers to add inventory to preexisting items
 var addInventory = function() {
     console.log("add inventory function");
 
 };
 
+//function that allows managers to add completely new products
 var newProduct = function() {
     console.log("new product function");
 

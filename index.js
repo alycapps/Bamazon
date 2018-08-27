@@ -19,6 +19,7 @@ conn.connect(function(err) {
     inquirerCall();
 });
 
+//function on set up to see what view user would like to acess
 var inquirerCall = function() {
     inquirer.prompt([
         {
@@ -39,6 +40,5 @@ var inquirerCall = function() {
         }
     });
 };
-
 
 module.exports = inquirerCall;
