@@ -58,11 +58,9 @@ var custCheckAvail = function() {
     {
         item_id: chosenId
     }, function(err, data) {
-        console.log("quantity of chosen" + JSON.stringify(data[0].stock_quantity));
         if (err) throw err;
         actualUnits = data[0].stock_quantity;
         itemPrice = data[0].price;
-        console.log("price: " + itemPrice);
         if(chosenUnits > actualUnits) {
             console.log("Insufficient Quantity");
             //start over and see what view they would like to use
