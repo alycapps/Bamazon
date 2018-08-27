@@ -71,13 +71,68 @@ var lowInventory = function() {
 
 //function that allows managers to add inventory to preexisting items
 var addInventory = function() {
-    console.log("add inventory function");
-
+    forSale();
+    inquirer.prompt([
+        {
+        name: "id",
+        type: "input",
+        message: "What is the ID of the item you would like to update?"
+        },
+        {
+        name: "units",
+        type: "input",
+        message: "What would you like to update the stock to?"
+        }
+    ]).then(function(response) {
+        conn.query("update products set ? where ?;", [{
+            stock_quantity: response.units,
+        },
+        { 
+            item_id: response.id
+        }
+        ], function(error, res) {
+            if (error) throw error;
+            console.log("You have updated the stock of item ID #" + response.id + " to " + response.units + " units.");
+        });
+    })
 };
 
 //function that allows managers to add completely new products
 var newProduct = function() {
     console.log("new product function");
-
+    inquirer.prompt([
+        {
+        name: "product_name",
+        type: "input",
+        message: "What is the name of the item you would like to add?"
+        },
+        {
+        name: "department_name",
+        type: "input",
+        message: "What is the department of the item you would like to add?"
+        },
+        {
+        name: "price",
+        type: "input",
+        message: "What is the price of the item you would like to add?"
+        },
+        {
+        name: "stock_quantity",
+        type: "input",
+        message: "How much of the item you would like to add?"
+        }
+    ]).then(function(response) {
+        //insert into products(product_name, department_name, price, stock_quantity)
+// values ("shield", "armory", 275, 110);
+        conn.query("insert into products set ?", {
+            product_name: response.product_name,
+            department_name: response.department_name,
+            price: response.price,
+            stock_quantity: response.stock_quantity
+        }, function(error, res) {
+            if (error) throw error;
+            console.log("You have added " + response.product_name + " to the inventory.");
+        });
+    })
 }
 module.exports = manager;
