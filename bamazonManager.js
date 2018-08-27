@@ -43,12 +43,26 @@ var manInquirerCall = function() {
 };
 
 var forSale = function() {
-    console.log("for sale function");
+    conn.query("select * from products", function(err, res) {
+        if (err) throw err;
+        for (var m=0; m<res.length; m++) {
+            console.log(`ID: ${res[m].item_id}, Product: ${res[m].product_name}, Price: $${res[m].price}, Quantity: ${res[m].stock_quantity}`);
+        }
+    })
 };
 
 var lowInventory = function() {
-    console.log("low inventory function");
-
+    conn.query("select * from products", function(err, res) {
+        if (err) throw err;
+        //check if less than 5 inventory in anything
+        for (var a=0; a<res.length; a++) {
+            var stock = res[a].stock_quantity;
+            if (stock < 5) {
+                return console.log(`ID: ${res[a].item_id}, Product: ${res[a].product_name}, Quantity: ${res[a].stock_quantity}`);
+            }
+        }
+        console.log("No items with low inventory");
+    })
 };
 
 var addInventory = function() {
