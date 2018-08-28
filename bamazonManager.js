@@ -68,13 +68,13 @@ var lowInventory = function() {
             }
         }
         //if statement to determine if there is any low inventory
-        if (stockArray) {
+        if (stockArray.length > 0) {
             for(var p=0; p<stockArray.length; p++) {
                 console.log(`ID: ${stockArray[p].ID}, Product: ${stockArray[p].Product}, Quantity: ${stockArray[p].Quantity}`)
             }
         }
         else {
-        console.log("No items with low inventory");
+            console.log("No items with low inventory");
         }
     })
 };
