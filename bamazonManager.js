@@ -1,6 +1,6 @@
 var inquirer = require("inquirer");
 var mysql = require("mysql");
-
+var isPaused = true;
 //setup for connection call
 var conn = mysql.createConnection({
     host: "localhost",
@@ -51,6 +51,7 @@ var forSale = function() {
         for (var m=0; m<res.length; m++) {
             console.log(`ID: ${res[m].item_id}, Product: ${res[m].product_name}, Price: $${res[m].price}, Quantity: ${res[m].stock_quantity}`);
         }
+        isPaused = false;
     })
 };
 
@@ -63,13 +64,12 @@ var lowInventory = function() {
         for (var a=0; a<res.length; a++) {
             var stock = res[a].stock_quantity;
             if (stock < 5) {
-                // return console.log(`ID: ${res[a].item_id}, Product: ${res[a].product_name}, Quantity: ${res[a].stock_quantity}`);
                 stockArray.push({ID:res[a].item_id, Product:res[a].product_name, Quantity:res[a].stock_quantity});
             }
         }
+        //if statement to determine if there is any low inventory
         if (stockArray) {
             for(var p=0; p<stockArray.length; p++) {
-                // console.log(JSON.stringify(stockArray));
                 console.log(`ID: ${stockArray[p].ID}, Product: ${stockArray[p].Product}, Quantity: ${stockArray[p].Quantity}`)
             }
         }
@@ -81,30 +81,43 @@ var lowInventory = function() {
 
 //function that allows managers to add inventory to preexisting items
 var addInventory = function() {
+    isPaused = true,
     forSale();
-    inquirer.prompt([
-        {
-        name: "id",
-        type: "input",
-        message: "What is the ID of the item you would like to update?"
-        },
-        {
-        name: "units",
-        type: "input",
-        message: "What would you like to update the stock to?"
+    function paused() {
+        if (isPaused) {
+            setTimeout(paused, 10);
         }
-    ]).then(function(response) {
-        conn.query("update products set ? where ?;", [{
-            stock_quantity: response.units,
-        },
-        { 
-            item_id: response.id
+        else {
+            addTo();
         }
-        ], function(error, res) {
-            if (error) throw error;
-            console.log("You have updated the stock of item ID #" + response.id + " to " + response.units + " units.");
-        });
-    })
+    }
+    paused();
+    var addTo = function() {
+        inquirer.prompt([
+            {
+            name: "id",
+            type: "input",
+            message: "What is the ID of the item you would like to update?"
+            },
+            {
+            name: "units",
+            type: "input",
+            message: "What would you like to update the stock to?"
+            }
+        ]).then(function(response) {
+            conn.query("update products set ? where ?;", [{
+                stock_quantity: response.units,
+            },
+            { 
+                item_id: response.id
+            }
+            ], function(error, res) {
+                if (error) throw error;
+                console.log("You have updated the stock of item ID #" + response.id + " to " + response.units + " units.");
+            });
+            isPaused = true;
+        })
+    }
 };
 
 //function that allows managers to add completely new products
