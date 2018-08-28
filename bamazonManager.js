@@ -57,15 +57,25 @@ var forSale = function() {
 //function that lets managers see items with low inventory(less than 5 in stock)
 var lowInventory = function() {
     conn.query("select * from products", function(err, res) {
+        var stockArray = [];
         if (err) throw err;
         //check if less than 5 inventory in anything
         for (var a=0; a<res.length; a++) {
             var stock = res[a].stock_quantity;
             if (stock < 5) {
-                return console.log(`ID: ${res[a].item_id}, Product: ${res[a].product_name}, Quantity: ${res[a].stock_quantity}`);
+                // return console.log(`ID: ${res[a].item_id}, Product: ${res[a].product_name}, Quantity: ${res[a].stock_quantity}`);
+                stockArray.push({ID:res[a].item_id, Product:res[a].product_name, Quantity:res[a].stock_quantity});
             }
         }
+        if (stockArray) {
+            for(var p=0; p<stockArray.length; p++) {
+                // console.log(JSON.stringify(stockArray));
+                console.log(`ID: ${stockArray[p].ID}, Product: ${stockArray[p].Product}, Quantity: ${stockArray[p].Quantity}`)
+            }
+        }
+        else {
         console.log("No items with low inventory");
+        }
     })
 };
 
